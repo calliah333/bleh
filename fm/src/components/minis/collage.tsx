@@ -6,9 +6,7 @@
 
 import { lang, tl, trans } from '@/build/trans';
 import { html, render } from 'lighterhtml';
-import { select } from '@/components/settings/select';
 import { setting } from '@/components/settings/settings';
-import { input } from '@/components/settings/input';
 import { auth, page, root } from '@/build/page';
 import { notify, notify_rm } from '@/components/dialog/notify';
 import { clean_number, pad2, sanitise } from '@/build/tools';
@@ -17,25 +15,15 @@ import { music_grids } from '@/components/music/music_grid';
 import { settings } from '@/build/config';
 import { version } from '@/main';
 import { download } from '@/components/dialog/share';
-import { render_user } from '@/pages/home/minis.js';
 import { redirect } from '@/components/music/music';
 import tippy from 'tippy.js';
 import html2canvas from 'html2canvas-pro';
-import { Icon, icon, icons } from '../shared/icon';
-import {
-	hybrid_timeframe_picker,
-	HybridTimeframePicker,
-	timeframe_text,
-} from '../date/timeframe';
+import { Icon, icons } from '../shared/icon';
+import { HybridTimeframePicker, timeframe_text } from '../date/timeframe';
 import { avatar } from '../shared/avatar';
 import { useSettings } from '@/page.ts';
 import { createRef } from 'jsx-dom';
-import { CompareBody, CompareHeader } from '@/components/minis/main.tsx';
-import {
-	CompareSelection,
-	CompareUser,
-	CompareUsers,
-} from '@/components/minis/user.tsx';
+import { CompareBody } from '@/components/minis/main.tsx';
 import { Input, InputGroup } from '@/components/input/input.tsx';
 import { Select } from '@/components/select/select.tsx';
 import { Button } from '@/components/button/button.tsx';
@@ -55,13 +43,11 @@ export function collage({ host, sidebar } = {}) {
 
 	const submit = createRef();
 	const body = createRef();
+	let collage_blob_url: string | null = null;
 
 	const value = 3;
 	const min = 1;
 	const max = 20;
-
-	const current_year = new Date().getFullYear();
-	const previous_year = current_year - 1;
 
 	const default_type = page.requested.type || 'albums';
 	const default_timeframe = page.requested.timeframe ||
@@ -79,83 +65,102 @@ export function collage({ host, sidebar } = {}) {
 		}, 100);
 	}
 
-	const user = createRef();
+	const actions = createRef();
 
+	const chart_control = (
+		<div class='setting collage-chart-setting'>
+			<div class='setting v standalone'>
+				<div class='heading'>
+					<h5>{tl(trans.chart_size)}</h5>
+				</div>
+				<InputGroup>
+					<Input
+						type='number'
+						value={value}
+						placeholder={value}
+						min={min}
+						length={max}
+						ref={width}
+					/>
+					<Icon name={icons.x} />
+					<Input
+						type='number'
+						value={value}
+						placeholder={value}
+						min={min}
+						length={max}
+						ref={height}
+					/>
+				</InputGroup>
+			</div>
+			<div
+				class='setting v standalone collage-type-setting'
+				data-type='select'
+			>
+				<div class='heading'>
+					<h5>{tl(trans.item_type)}</h5>
+				</div>
+				<Select
+					value={default_type}
+					values={[
+						{
+							text: tl(trans.item_type),
+						},
+						{
+							value: 'artists',
+							text: () => (
+								<IconLabel icon={icons.artist}>
+									{tl(trans.artists)}
+								</IconLabel>
+							),
+						},
+						{
+							value: 'albums',
+							text: () => (
+								<IconLabel icon={icons.album}>
+									{tl(trans.albums)}
+								</IconLabel>
+							),
+						},
+						{
+							value: 'tracks',
+							text: () => (
+								<IconLabel icon={icons.track}>
+									{tl(trans.tracks)}
+								</IconLabel>
+							),
+						},
+					]}
+					ref={type}
+				/>
+			</div>
+		</div>
+	);
+	const timeframe_control = (
+		<div class='setting v collage-timeframe-setting' data-type='select'>
+			<div class='heading'>
+				<h5>{tl(trans.timeframe)}</h5>
+			</div>
+			<HybridTimeframePicker
+				value={default_timeframe}
+				ref={timeframe}
+			/>
+		</div>
+	);
+	const action_controls = (
+		<div class='collage-actions' ref={actions}>
+			<Button primary ref={submit} onClick={init_collage}>
+				<Icon name={icons.collage} />
+				{tl(trans.generate)}
+			</Button>
+		</div>
+	);
 	host.replaceChildren(
-		<>
-			<CompareHeader>
-				<CompareUsers ref={user}>
-					<CompareUser name={page.name} replacePage />
-				</CompareUsers>
-				<CompareSelection>
-					<InputGroup>
-						<Input
-							type='number'
-							value={value}
-							placeholder={value}
-							min={min}
-							length={max}
-							ref={width}
-						/>
-						<Icon name={icons.x} />
-						<Input
-							type='number'
-							value={value}
-							placeholder={value}
-							min={min}
-							length={max}
-							ref={height}
-						/>
-					</InputGroup>
-					<Select
-						value={default_type}
-						values={[
-							{
-								text: tl(trans.item_type),
-							},
-							{
-								value: 'artists',
-								text: () => (
-									<IconLabel icon={icons.artist}>
-										{tl(trans.artists)}
-									</IconLabel>
-								),
-							},
-							{
-								value: 'albums',
-								text: () => (
-									<IconLabel icon={icons.album}>
-										{tl(trans.albums)}
-									</IconLabel>
-								),
-							},
-							{
-								value: 'tracks',
-								text: () => (
-									<IconLabel icon={icons.track}>
-										{tl(trans.tracks)}
-									</IconLabel>
-								),
-							},
-						]}
-						ref={type}
-					/>
-					<HybridTimeframePicker
-						value={default_timeframe}
-						ref={timeframe}
-					/>
-					<Button primary ref={submit} onClick={init_collage}>
-						<Icon name={icons.collage} />
-						{tl(trans.generate)}
-					</Button>
-				</CompareSelection>
-			</CompareHeader>
-			<CompareBody ref={body} data-filled='false'>
-				<Placeholder face='(๑>◡<๑)'>
-					{tl(trans.choose_a_timeframe_above)}
-				</Placeholder>
-			</CompareBody>
-		</>,
+		<CompareBody ref={body} data-filled='false'>
+			<Placeholder face='(๑>◡<๑)'>
+				{tl(trans.choose_a_timeframe_above)}
+			</Placeholder>
+		</CompareBody>,
 	);
 
 	let setting_group;
@@ -184,18 +189,6 @@ export function collage({ host, sidebar } = {}) {
 				if (page.name == auth.name) {
 					page.avatar = auth.avatar;
 				}
-
-				render(
-					user,
-					html`
-						${render_user(
-							page.name,
-							page.avatar,
-							user,
-							true,
-						)}
-					`,
-				);
 			}}
 			            />
 			            ${() => {
@@ -232,12 +225,15 @@ export function collage({ host, sidebar } = {}) {
 			}}
 			        </div>
 			    </div>
+			    ${chart_control}
+			    ${timeframe_control}
 			    ${setting({ id: 'collage_title' })}
 			    ${setting({ id: 'collage_grid_gap' })}
 			    ${setting({ id: 'collage_centered' })}
 			    ${setting({ id: 'collage_grid_text' })}
 			    ${setting({ id: 'collage_grid_plays' })}
 			</div>
+			${action_controls}
 		`,
 	);
 	let collage_settings = setting_group.querySelectorAll(':scope > .setting');
@@ -328,6 +324,7 @@ export function collage({ host, sidebar } = {}) {
 			return;
 		}
 
+		actions.current.replaceChildren(submit.current);
 		type.current.disabled = true;
 		timeframe.current.disabled = true;
 		collage_settings.forEach((option) => {
@@ -673,8 +670,16 @@ export function collage({ host, sidebar } = {}) {
 			}).then((canvas) => {
 				canvas.toBlob((blob) => {
 					try {
-						const blob_url = URL.createObjectURL(blob);
+						if (!blob) {
+							throw new Error('Failed to render collage image.');
+						}
 
+						if (collage_blob_url) {
+							URL.revokeObjectURL(collage_blob_url);
+						}
+
+						const blob_url = URL.createObjectURL(blob);
+						collage_blob_url = blob_url;
 						const date = new Date();
 
 						const filename = tl(trans.chart_template_filename, {
@@ -689,29 +694,32 @@ export function collage({ host, sidebar } = {}) {
 							}-${pad2(date.getDate())}`,
 						});
 
+						actions.current.append(
+							<Button
+								primary
+								onClick={() => download(blob_url, filename)}
+							>
+								<Icon name={icons.download} />
+								{tl(trans.download)}
+							</Button>,
+						);
+
 						body.current.replaceChildren(
-							<div class='collage-canvas'>
-								{canvas}
-								<div class='collage-canvas-actions'>
-									<Button
-										primary
-										onClick={() => {
-											download(blob_url, filename);
-										}}
-									>
-										<Icon name={icons.download} />
-										{tl(trans.download)}
-									</Button>
-									<Button
-										onClick={() => {
-											open(blob_url);
-										}}
-									>
-										{tl(trans.open)}
-										<Icon name={icons.external} />
-									</Button>
-								</div>
-							</div>,
+							<a
+								class='collage-canvas'
+								href={blob_url}
+								target='_blank'
+								rel='noopener noreferrer'
+								aria-label={tl(trans.open_new_tab)}
+								title={tl(trans.open_new_tab)}
+							>
+								<img
+									src={blob_url}
+									alt=''
+									width={canvas.width}
+									height={canvas.height}
+								/>
+							</a>,
 						);
 					} catch (e) {
 						collage_error(e);

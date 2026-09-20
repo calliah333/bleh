@@ -98,6 +98,7 @@ const CspPolicies: PolicyMap = {
 	'img-src': [
 		"'self'",
 		'data:',
+		'blob:',
 
 		// stuff that last.fm uses
 		'https://*.last.fm',

@@ -1,61 +1,70 @@
 .collage-canvas {
-	position: relative;
+	display: block;
+	width: fit-content;
+	max-width: 100%;
+	margin: 0 auto var(--card-gap);
+	border-radius: var(--item-med-radius);
 
-	canvas {
+	img {
+		display: block;
 		max-width: 100% !important;
 		max-height: 900px !important;
-		border-radius: var(--item-med-radius);
+		border-radius: inherit;
 		box-shadow: var(--interact-shadow);
-
-		transition-property: opacity;
-		transition-duration: 0.3s;
-		transition-timing-function: var(--trans-function-ani);
 	}
 
-	.collage-canvas-actions {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: var(--button-list-gap);
-		position: absolute;
-		inset: 0;
-
-		opacity: 0;
-		scale: 0.95;
-
-		transition-property: opacity, scale;
-		transition-duration: 0.3s;
-		transition-timing-function: var(--trans-function-ani);
+	&:focus-visible {
+		outline: 2px solid oklch(var(--h3));
+		outline-offset: 3px;
 	}
+}
 
-	width: fit-content;
-	margin: 0 auto;
+.collage-chart-setting {
+	flex-direction: row !important;
+	gap: 0;
 
-	&:hover {
-		canvas {
-			opacity: 0.3;
+	& > .setting {
+		flex: 1 1 0;
+		min-width: 0;
+
+		&:first-child {
+			padding-right: var(--setting-group-padding);
+
+			& > .input-group {
+				width: 100%;
+				max-width: 124px;
+				flex-wrap: nowrap;
+
+				& > .input-container {
+					flex: 1;
+					min-width: 0;
+
+					& > .modern-input {
+						--padding: var(--button-verts) 6px;
+					}
+				}
+			}
 		}
 
-		.collage-canvas-actions {
-			opacity: 1;
-			scale: 1;
+		& + .setting {
+			border-left: 1px solid var(--separator);
+			padding-left: var(--setting-group-padding);
 		}
 	}
 }
 
-.collage-finished {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--card-gap);
-	margin-bottom: var(--card-gap);
+:is(.collage-type-setting > .select-wrap > .select-button, .collage-timeframe-setting > .timeframe-picker-button) {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
-	strong {
-		font-size: 16px;
-		line-height: 20px;
-		color: oklch(var(--c1));
-		cursor: default;
-	}
+.collage-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--button-list-gap);
+	margin-top: var(--card-gap);
 }
 
 .collage {
@@ -83,7 +92,7 @@
 		}
 
 		.grid-item-plays:before {
-			--top: 4px;
+			--top: 3px;
 			--mask: unset;
 			--icon-16-placeholder: unset;
 			background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNCcgaGVpZ2h0PScyNCcgdmlld0JveD0nMCAwIDI0IDI0Jz48dGl0bGU+cGxheV9jaXJjbGVfZmlsbDwvdGl0bGU+PGcgaWQ9InBsYXlfY2lyY2xlX2ZpbGwiIGZpbGw9J25vbmUnPjxwYXRoIGQ9J00yNCAwdjI0SDBWMHpNMTIuNTkzIDIzLjI1OGwtLjAxMS4wMDItLjA3MS4wMzUtLjAyLjAwNC0uMDE0LS4wMDQtLjA3MS0uMDM1Yy0uMDEtLjAwNC0uMDE5LS4wMDEtLjAyNC4wMDVsLS4wMDQuMDEtLjAxNy40MjguMDA1LjAyLjAxLjAxMy4xMDQuMDc0LjAxNS4wMDQuMDEyLS4wMDQuMTA0LS4wNzQuMDEyLS4wMTYuMDA0LS4wMTctLjAxNy0uNDI3Yy0uMDAyLS4wMS0uMDA5LS4wMTctLjAxNy0uMDE4bS4yNjUtLjExMy0uMDEzLjAwMi0uMTg1LjA5My0uMDEuMDEtLjAwMy4wMTEuMDE4LjQzLjAwNS4wMTIuMDA4LjAwNy4yMDEuMDkzYy4wMTIuMDA0LjAyMyAwIC4wMjktLjAwOGwuMDA0LS4wMTQtLjAzNC0uNjE0Yy0uMDAzLS4wMTItLjAxLS4wMi0uMDItLjAyMm0tLjcxNS4wMDJhLjAyMy4wMjMgMCAwIDAtLjAyNy4wMDZsLS4wMDYuMDE0LS4wMzQuNjE0YzAgLjAxMi4wMDcuMDIuMDE3LjAyNGwuMDE1LS4wMDIuMjAxLS4wOTMuMDEtLjAwOC4wMDQtLjAxMS4wMTctLjQzLS4wMDMtLjAxMi0uMDEtLjAxeicvPjxwYXRoIGZpbGw9JyNGRkZGRkZGRicgZD0nTTEyIDJjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTBTMiAxNy41MjMgMiAxMiA2LjQ3NyAyIDEyIDJNOC45NjQgOC42NWwtLjA1My41LS4wMy4zMzMtLjA0Mi42LS4wMjQuNDYtLjAxOC41MDUtLjAxLjU0OXYuNTc4bC4wMS41NDkuMDE4LjUwNi4wMjQuNDYuMDQyLjYuMDcxLjczLjAxMy4xMDJhMS4xOTIgMS4xOTIgMCAwIDAgMS42NTEuOTU0bC40NTYtLjIwMi42NTEtLjMwOS4zOS0uMTk2LjQzLS4yMjQuNDY2LS4yNTMuNDk4LS4yODIuNDkzLS4yOS4yMzEtLjE0LjQzLS4yNy4zODgtLjI1LjM0Mi0uMjI5LjY1My0uNDYuMTc3LS4xMzFhMS4xOTIgMS4xOTIgMCAwIDAtLjAwMS0xLjkwOGwtLjQwNi0uMjk3LS4yNzUtLjE5My0uMzItLjIxOC0uNTY1LS4zNjgtLjQyOC0uMjY4LS40Ny0uMjgyLS40OTktLjI4OC0uNDc4LS4yNjUtLjQ0Ny0uMjM4LS40MS0uMjEtLjU0LS4yNjMtLjQzOS0uMjAyLS4yMy0uMTAyYTE2LjgxNCAxNi44MTQgMCAwIDAtLjA5NS0uMDQgMS4xOTIgMS4xOTIgMCAwIDAtMS42NTQuOTUyJy8+PC9nPjwvc3ZnPg==")

@@ -54,12 +54,15 @@
 
 		.grid-items-item-main-text {
 			color: #fff;
+
+			.feat {
+				opacity: 1;
+			}
 		}
 
 		.grid-items-item-aux-text {
 			--l3-c: #fff;
 			color: #fff;
-			opacity: 0.8;
 		}
 	}
 
