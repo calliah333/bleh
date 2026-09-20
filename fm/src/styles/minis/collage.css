@@ -32,7 +32,7 @@
 
 			& > .input-group {
 				width: 100%;
-				max-width: 124px;
+				max-width: 92px;
 				flex-wrap: nowrap;
 
 				& > .input-container {
@@ -41,6 +41,13 @@
 
 					& > .modern-input {
 						--padding: var(--button-verts) 6px;
+						appearance: textfield;
+
+						&::-webkit-inner-spin-button,
+						&::-webkit-outer-spin-button {
+							margin: 0;
+							appearance: none;
+						}
 					}
 				}
 			}
@@ -51,6 +58,10 @@
 			padding-left: var(--setting-group-padding);
 		}
 	}
+}
+
+.collage-type-menu .select-item {
+	min-width: 130px !important;
 }
 
 :is(.collage-type-setting > .select-wrap > .select-button, .collage-timeframe-setting > .timeframe-picker-button) {

@@ -19,7 +19,7 @@ import {
 	FloatingWindowContents,
 } from '@/components/menu/floating_window.tsx';
 import { Tabbed } from '@/components/tab/tabbed.tsx';
-import { icons } from '@/components/shared/icon.tsx';
+import { Icon, icons } from '@/components/shared/icon.tsx';
 import { createRef } from 'jsx-dom';
 import { menu_tooltip } from '@/components/shared/tooltips.tsx';
 import { Alert } from '@/components/text/alert.tsx';
@@ -29,6 +29,7 @@ interface HybridTimeframePickerProps {
 	value?: string;
 	disabled?: boolean;
 	onChange?: (val: string) => void;
+	icon?: string;
 }
 
 type HybridTimeframePickerElement = HTMLButtonElement & {
@@ -40,6 +41,7 @@ export function HybridTimeframePicker({
 	value,
 	disabled = false,
 	onChange,
+	icon,
 }: HybridTimeframePickerProps) {
 	if (!value) value = 'date_preset=LAST_7_DAYS';
 
@@ -79,6 +81,7 @@ export function HybridTimeframePicker({
 
 		elem.replaceChildren(
 			<>
+				{icon && <Icon name={icon} />}
 				{timeframe_text(value!)}
 			</>,
 		);

@@ -20,6 +20,7 @@ interface SelectProps {
 	value?: string;
 	disabled?: boolean;
 	className?: string;
+	menuClassName?: string;
 	name?: string;
 	onChange?: (val: string) => void;
 	inSettings?: boolean;
@@ -36,6 +37,7 @@ export function Select({
 	value,
 	disabled,
 	className,
+	menuClassName,
 	name,
 	onChange,
 	inSettings,
@@ -89,6 +91,8 @@ export function Select({
 			}
 		},
 	});
+
+	if (menuClassName) menu.popper.classList.add(menuClassName);
 
 	Object.defineProperty(wrap, 'value', {
 		get() {

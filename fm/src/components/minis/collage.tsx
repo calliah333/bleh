@@ -49,6 +49,18 @@ export function collage({ host, sidebar } = {}) {
 	const min = 1;
 	const max = 20;
 
+	const restrict_dimension = (
+		input: typeof width,
+		input_value: string | number,
+	) => {
+		if (input_value === '') return;
+
+		input.current.value = Math.min(
+			max,
+			Math.max(min, Math.trunc(Number(input_value))),
+		);
+	};
+
 	const default_type = page.requested.type || 'albums';
 	const default_timeframe = page.requested.timeframe ||
 		'date_preset=LAST_30_DAYS';
@@ -81,6 +93,8 @@ export function collage({ host, sidebar } = {}) {
 						min={min}
 						length={max}
 						ref={width}
+						onChange={(input_value) =>
+							restrict_dimension(width, input_value)}
 					/>
 					<Icon name={icons.x} />
 					<Input
@@ -90,6 +104,8 @@ export function collage({ host, sidebar } = {}) {
 						min={min}
 						length={max}
 						ref={height}
+						onChange={(input_value) =>
+							restrict_dimension(height, input_value)}
 					/>
 				</InputGroup>
 			</div>
@@ -102,10 +118,8 @@ export function collage({ host, sidebar } = {}) {
 				</div>
 				<Select
 					value={default_type}
+					menuClassName='collage-type-menu'
 					values={[
-						{
-							text: tl(trans.item_type),
-						},
 						{
 							value: 'artists',
 							text: () => (
@@ -143,6 +157,7 @@ export function collage({ host, sidebar } = {}) {
 			</div>
 			<HybridTimeframePicker
 				value={default_timeframe}
+				icon={icons.calendar}
 				ref={timeframe}
 			/>
 		</div>
